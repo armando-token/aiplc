@@ -1,0 +1,13 @@
+{
+  "runId": "jitter-load",
+  "hostId": "luckfox",
+  "kernel": "6.1.99",
+  "arch": "arm",
+  "engine": "none",
+  "workload": "scheduler-jitter",
+  "mode": "stress",
+  "startedUnixS": 1777325939,
+  "totalScans": 500,
+  "deadlineMisses": 0,
+  "rtScheduler": "SCHED_FIFO(prio=60)"
+}

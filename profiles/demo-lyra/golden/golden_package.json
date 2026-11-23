@@ -1,0 +1,59 @@
+{
+  "schema": "module-package/v1",
+  "packageId": "golden-m1",
+  "baseRevision": "41",
+  "target": "armv7-linux-gnueabihf",
+  "engine": "native-ir",
+  "abiVersion": 1,
+  "stateSchema": "arena/v1",
+  "profileHash": "fb57c499d4e749fecc301a189a7cfc3f1df0b814a9034764687edcc2a9610d1c",
+  "irDigest": "95afe9f4d78c085a78982755bf511c1c9ad7e8eb1764f247db9af032c7d23dc7",
+  "canonicalSourceDigest": "1d2f5b14832dc1b2360895be52ff05d102aa0d2fdbcf40dec22d528dc4ab37f5",
+  "wasmDigest": null,
+  "aotDigest": null,
+  "migrationPlanHash": "7cf8dbf296ee869e287cc3b8f53a6dfbfd4d17aaef6aa34a453411a78282d57d",
+  "policyHash": "4b5f1593df499ab8a950a5d865309f60b2d290c7beaab5afd51e08fd793aad07",
+  "maxStateBytes": 1280,
+  "maxLinearMemBytes": 65536,
+  "requestedCapabilities": [],
+  "requiredBlocks": [
+    {
+      "stableId": 1001,
+      "blockType": "TON",
+      "schemaVersion": 1,
+      "stateSize": 40,
+      "retentionClass": "CYCLIC",
+      "migrationPolicy": "RESET"
+    }
+  ],
+  "ruleSet": {
+    "schema": "rule-set/v1",
+    "baseRevision": "41",
+    "changes": [
+      {
+        "op": "upsertRule",
+        "ruleId": "temp.high-alarm",
+        "templateId": "thresholdHoldWithLatchedHysteresis",
+        "input": "temp.process",
+        "unit": "degC_x10",
+        "triggerAtOrAbove": 450,
+        "clearAtOrBelow": 440,
+        "bandLow": null,
+        "bandHigh": null,
+        "pulsePeriodMs": null,
+        "holdMs": 10000,
+        "requiredQuality": "GOOD",
+        "onInputFault": "COMMAND_OFF_AND_RESET",
+        "output": "tower.red",
+        "timingStateOnChange": "RESET",
+        "stableBlockId": 1001,
+        "blockType": "TON"
+      }
+    ]
+  },
+  "wasmBase64": null,
+  "aotBase64": null,
+  "jsSource": null,
+  "signatureHex": "b85a0c23e6d921a349b9d413fdf28818df43dee6037f04b3a81537dd3d7ee70241b4531cc0f5e46bb150e589bd0e820366b34c0098b3b6fd619219956542ec03",
+  "publicKeyHex": "afe28ce4aabaca4d144a87fd279774a27a4e93d21bee7a2742883b54ac079d8f"
+}

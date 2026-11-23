@@ -1,0 +1,13 @@
+{
+  "runId": "a1-aot-W1-active",
+  "hostId": "Armandos-Mac-mini.local",
+  "kernel": "27.0.0",
+  "arch": "aarch64",
+  "engine": "a1-aot",
+  "workload": "W1",
+  "mode": "active",
+  "startedUnixS": 1795419430,
+  "totalScans": 250,
+  "deadlineMisses": 0,
+  "rtScheduler": "CFS/PREEMPT_DEFAULT"
+}

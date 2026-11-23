@@ -1,0 +1,70 @@
+{
+  "allPassed": true,
+  "arch": "arm",
+  "checks": [
+    {
+      "hardware": true,
+      "id": "H01",
+      "observedOffMask": 0,
+      "observedOnMask": 1,
+      "passed": true,
+      "secondOpenBlocked": true
+    },
+    {
+      "faultQuality": "Invalid",
+      "goodValue": 452,
+      "id": "H02",
+      "note": "Real Modbus RTU frames over OS PTY (THT-02 slave simulated)",
+      "passed": true
+    },
+    {
+      "id": "F01",
+      "passed": true
+    },
+    {
+      "cgroupApplied": true,
+      "cgroupMemStats": {
+        "current_bytes": 8192,
+        "oom_events": 2,
+        "peak_bytes": 8388608
+      },
+      "id": "F02",
+      "oomConfirmed": true,
+      "passed": true
+    },
+    {
+      "id": "F03",
+      "passed": true
+    },
+    {
+      "escapeProbe": "engine runtime error: escape_blocked:socket_rc=-1,socket_err=1,open_rc=-1,open_err=1",
+      "id": "F06",
+      "passed": true,
+      "sandbox": {
+        "cgroup_applied": true,
+        "cgroup_path": "/sys/fs/cgroup/plc-worker-hil-f06-sec",
+        "effective_uid": 65534,
+        "memory_max_bytes": 16777216,
+        "network_namespace": false,
+        "note": "kernel_no_netns_using_seccomp_bpf",
+        "seccomp_applied": true,
+        "uid_dropped": true
+      }
+    },
+    {
+      "id": "D03",
+      "passed": true,
+      "recoveredRev": 1,
+      "startedDisarmed": true
+    },
+    {
+      "id": "S03-A2",
+      "m1Rev": 1,
+      "m2Rev": 2,
+      "passed": true,
+      "rollbackRev": 3
+    }
+  ],
+  "host": "luckfox",
+  "kernel": "6.1.99"
+}

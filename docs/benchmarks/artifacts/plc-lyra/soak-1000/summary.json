@@ -1,0 +1,54 @@
+{
+  "cycleDurNs": {
+    "count": 1000,
+    "maxNs": 40934046,
+    "meanNs": 18274698,
+    "minNs": 14684544,
+    "p50Ns": 17881044,
+    "p95Ns": 21462877,
+    "p999Ns": 40305171,
+    "p99Ns": 25197669
+  },
+  "deadlineMisses": 0,
+  "droppedSamples": 0,
+  "engine": "wamr-aot",
+  "evalDurNs": {
+    "count": 1000,
+    "maxNs": 40934046,
+    "meanNs": 18274698,
+    "minNs": 14684544,
+    "p50Ns": 17881044,
+    "p95Ns": 21462877,
+    "p999Ns": 40305171,
+    "p99Ns": 25197669
+  },
+  "finalRevision": "1001",
+  "maxTempSocMc": 49356,
+  "minMemAvailableKb": 348752,
+  "mode": "soak",
+  "peakPssKb": 19213,
+  "peakRssKb": 20064,
+  "runId": "soak-1000",
+  "swapLatencyNs": {
+    "count": 1000,
+    "maxNs": 40934046,
+    "meanNs": 18274698,
+    "minNs": 14684544,
+    "p50Ns": 17881044,
+    "p95Ns": 21462877,
+    "p999Ns": 40305171,
+    "p99Ns": 25197669
+  },
+  "totalScans": 1000,
+  "wakeupJitterNs": {
+    "count": 1000,
+    "maxNs": 0,
+    "meanNs": 0,
+    "minNs": 0,
+    "p50Ns": 0,
+    "p95Ns": 0,
+    "p999Ns": 0,
+    "p99Ns": 0
+  },
+  "workload": "M1-M2-swap-rollback"
+}

@@ -1,0 +1,13 @@
+{
+  "runId": "a2-quickjs-W2-active",
+  "hostId": "luckfox",
+  "kernel": "6.1.99",
+  "arch": "arm",
+  "engine": "a2-quickjs",
+  "workload": "W2",
+  "mode": "active",
+  "startedUnixS": 1777326032,
+  "totalScans": 350,
+  "deadlineMisses": 0,
+  "rtScheduler": "SCHED_FIFO(prio=55)"
+}

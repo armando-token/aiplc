@@ -1,0 +1,43 @@
+{
+  "cycleDurNs": {
+    "count": 350,
+    "maxNs": 2409166,
+    "meanNs": 1091995,
+    "minNs": 996042,
+    "p50Ns": 1063417,
+    "p95Ns": 1259416,
+    "p999Ns": 2409166,
+    "p99Ns": 1759625
+  },
+  "deadlineMisses": 0,
+  "droppedSamples": 0,
+  "engine": "a2-quickjs",
+  "evalDurNs": {
+    "count": 350,
+    "maxNs": 2401583,
+    "meanNs": 1082053,
+    "minNs": 986417,
+    "p50Ns": 1053792,
+    "p95Ns": 1248917,
+    "p999Ns": 2401583,
+    "p99Ns": 1741541
+  },
+  "maxTempSocMc": 51138,
+  "minMemAvailableKb": 363984,
+  "mode": "shadow-load",
+  "peakPssKb": 1255,
+  "peakRssKb": 3112,
+  "runId": "a2-quickjs-W1-shadow-load",
+  "totalScans": 350,
+  "wakeupJitterNs": {
+    "count": 350,
+    "maxNs": 1829505,
+    "meanNs": 52257,
+    "minNs": 16137,
+    "p50Ns": 22648,
+    "p95Ns": 46912,
+    "p999Ns": 1829505,
+    "p99Ns": 1170431
+  },
+  "workload": "W1"
+}

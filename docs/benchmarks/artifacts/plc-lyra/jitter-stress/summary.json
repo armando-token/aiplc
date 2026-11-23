@@ -1,0 +1,43 @@
+{
+  "cycleDurNs": {
+    "count": 500,
+    "maxNs": 3792,
+    "meanNs": 1822,
+    "minNs": 584,
+    "p50Ns": 1750,
+    "p95Ns": 2917,
+    "p999Ns": 3792,
+    "p99Ns": 3209
+  },
+  "deadlineMisses": 0,
+  "droppedSamples": 0,
+  "engine": "none",
+  "evalDurNs": {
+    "count": 500,
+    "maxNs": 3792,
+    "meanNs": 1822,
+    "minNs": 584,
+    "p50Ns": 1750,
+    "p95Ns": 2917,
+    "p999Ns": 3792,
+    "p99Ns": 3209
+  },
+  "maxTempSocMc": 49950,
+  "minMemAvailableKb": 364164,
+  "mode": "stress",
+  "peakPssKb": 2598,
+  "peakRssKb": 3420,
+  "runId": "jitter-load",
+  "totalScans": 500,
+  "wakeupJitterNs": {
+    "count": 500,
+    "maxNs": 940041,
+    "meanNs": 34777,
+    "minNs": 11838,
+    "p50Ns": 20999,
+    "p95Ns": 40118,
+    "p999Ns": 940041,
+    "p99Ns": 516153
+  },
+  "workload": "scheduler-jitter"
+}
