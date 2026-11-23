@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Luckfox Lyra PLC — Consola Offline</title>
+  <link rel="stylesheet" href="/console/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>PLC Automatico · Consola Industrial Offline</h1>
+      <div id="conn-status" class="muted">Verificando estado...</div>
+    </div>
+    <div class="auth-bar">
+      <input id="device-id" value="lyra-bench-01" aria-label="Device ID">
+      <select id="role-token" aria-label="Token de rol">
+        <option value="plc-operator-token">Operador</option>
+        <option value="plc-engineer-token">Ingeniero</option>
+        <option value="plc-author-token">Autor</option>
+        <option value="plc-reader-token">Lector</option>
+      </select>
+      <button id="btn-refresh" type="button">Actualizar</button>
+    </div>
+  </header>
+
+  <main class="grid">
+    <section class="card">
+      <h2>Estado en Tiempo Real &amp; Evidencia (D04)</h2>
+      <div id="pending-banner" class="banner hidden"></div>
+      <div id="witness-banner" class="banner warn hidden"></div>
+      <div class="kv-grid">
+        <div><span>Revision Activa</span><strong id="val-rev">-</strong></div>
+        <div><span>Armado</span><strong id="val-armed">-</strong></div>
+        <div><span>Scan / Boot</span><strong id="val-scan">-</strong></div>
+        <div><span>Fallback Latch</span><strong id="val-latch">-</strong></div>
+      </div>
+      <h3>4 Insignias de Evidencia Separadas</h3>
+      <div class="badges" id="evidence-badges">
+        <span class="badge" id="badge-selected">SELECTED_IN_SCAN: -</span>
+        <span class="badge" id="badge-applied">DRIVER_APPLIED: -</span>
+        <span class="badge" id="badge-observed">PHYSICAL_OBSERVED: -</span>
+        <span class="badge" id="badge-persisted">ACTIVE_PERSISTED: -</span>
+      </div>
+      <h3>Canales de Salida</h3>
+      <ul class="channels">
+        <li>tower.red <span class="tag phys">PHYSICAL gpiochip0:17</span> <strong id="ch-red">-</strong></li>
+        <li>tower.green <span class="tag phys">PHYSICAL gpiochip0:18</span> <strong id="ch-green">-</strong></li>
+        <li>tower.blue <span class="tag virt">VIRTUAL (Sin GPIO cableado)</span> <strong id="ch-blue">-</strong></li>
+      </ul>
+      <div class="actions">
+        <button id="btn-rearm" type="button">Rearmar Control</button>
+        <button id="btn-rollback" type="button" class="warn-btn">Rollback a Anterior</button>
+        <button id="btn-manual-off" type="button">Manual Seguro OFF (TTL 10s)</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Comandos en Espanol / Voz Push-to-Talk (es-PE)</h2>
+      <p class="muted">El asistente nunca auto-activa: primero normaliza y exige revision explicita + Authorize + Activate.</p>
+      <textarea id="spanish-input" rows="3" placeholder="Ej: Cambia el retardo de 10 segundos a 5 segundos"></textarea>
+      <div class="actions">
+        <button id="btn-ptt" type="button">Push-to-Talk (es-PE)</button>
+        <button id="btn-parse-es" type="button">Interpretar Intencion</button>
+      </div>
+      <pre id="intent-preview" class="codebox"></pre>
+    </section>
+
+    <section class="card">
+      <h2>Diagrama Ladder Vivo (Proyeccion Determinista)</h2>
+      <div id="ladder-container" class="svg-wrap"></div>
+    </section>
+
+    <section class="card">
+      <h2>Flujo Transaccional &amp; Importador IEC (ST / PLCopen LD)</h2>
+      <textarea id="pkg-json-input" rows="5" placeholder="Pegue JSON firmado ModulePackageV1 o inspeccione propuestas"></textarea>
+      <div class="row">
+        <input id="tx-id-input" value="tx-console-1" aria-label="Transaction ID">
+        <input id="pkg-hash-input" placeholder="expectedPackageHash" aria-label="Expected Package Hash">
+      </div>
+      <div class="actions">
+        <button id="btn-propose" type="button">1. Proponer (Shadow)</button>
+        <button id="btn-authorize" type="button">2. Autorizar</button>
+        <button id="btn-activate" type="button">3. Activar en Frontera</button>
+        <button id="btn-cancel" type="button">Cancelar Armed</button>
+      </div>
+      <pre id="tx-log" class="codebox"></pre>
+    </section>
+  </main>
+
+  <script src="/console/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "runId": "a1-interp-W5-active",
+  "hostId": "luckfox",
+  "kernel": "6.1.99",
+  "arch": "arm",
+  "engine": "a1-interp",
+  "workload": "W5",
+  "mode": "active",
+  "startedUnixS": 1777326103,
+  "totalScans": 350,
+  "deadlineMisses": 0,
+  "rtScheduler": "SCHED_FIFO(prio=55)"
+}

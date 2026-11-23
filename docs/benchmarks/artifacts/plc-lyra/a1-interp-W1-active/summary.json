@@ -1,0 +1,43 @@
+{
+  "cycleDurNs": {
+    "count": 350,
+    "maxNs": 677250,
+    "meanNs": 502721,
+    "minNs": 393750,
+    "p50Ns": 507792,
+    "p95Ns": 562042,
+    "p999Ns": 677250,
+    "p99Ns": 604334
+  },
+  "deadlineMisses": 0,
+  "droppedSamples": 0,
+  "engine": "a1-interp",
+  "evalDurNs": {
+    "count": 350,
+    "maxNs": 658292,
+    "meanNs": 487660,
+    "minNs": 380333,
+    "p50Ns": 495250,
+    "p95Ns": 546292,
+    "p999Ns": 658292,
+    "p99Ns": 591500
+  },
+  "maxTempSocMc": 46980,
+  "minMemAvailableKb": 364708,
+  "mode": "active",
+  "peakPssKb": 1283,
+  "peakRssKb": 808,
+  "runId": "a1-interp-W1-active",
+  "totalScans": 350,
+  "wakeupJitterNs": {
+    "count": 350,
+    "maxNs": 93847,
+    "meanNs": 64864,
+    "minNs": 46460,
+    "p50Ns": 66613,
+    "p95Ns": 82170,
+    "p999Ns": 93847,
+    "p99Ns": 91382
+  },
+  "workload": "W1"
+}

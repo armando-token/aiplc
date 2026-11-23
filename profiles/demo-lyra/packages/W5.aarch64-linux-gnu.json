@@ -1,0 +1,86 @@
+{
+  "schema": "module-package/v1",
+  "packageId": "W5",
+  "baseRevision": "1",
+  "target": "aarch64-linux-gnu",
+  "engine": "wamr-aot",
+  "abiVersion": 1,
+  "stateSchema": "arena/v1",
+  "profileHash": "fb57c499d4e749fecc301a189a7cfc3f1df0b814a9034764687edcc2a9610d1c",
+  "irDigest": "488bc19caa32da5e284cfc3e833f3e605c1dfb01f2d185c5a4239ef153b91fda",
+  "canonicalSourceDigest": "0270a3f5b17e826b1854e2cb9003869d1b3a07a115a1df0c38d011ae5448937a",
+  "wasmDigest": "054dc47ac16feeac5d4a69d992c31cf8852dc47434a7c0c3797d068941089abf",
+  "aotDigest": "62ac025a32b29e4d53cde8229f09e7f34fd8e22b8dea94c93962e88def59650b",
+  "migrationPlanHash": "5ed5bceba5db554ba20049e2e278e2c1133c31a8d57e453e40e96b959a6f6b41",
+  "policyHash": "18b1fbc2bbf33604e61fa7b059d73ee33297bb6c409ee92b6a25da73ffedd874",
+  "maxStateBytes": 1280,
+  "maxLinearMemBytes": 131072,
+  "requestedCapabilities": [],
+  "requiredBlocks": [
+    {
+      "stableId": 5001,
+      "blockType": "TON",
+      "schemaVersion": 1,
+      "stateSize": 40,
+      "retentionClass": "CYCLIC",
+      "migrationPolicy": "PRESERVE_ELAPSED"
+    },
+    {
+      "stableId": 5002,
+      "blockType": "CTU",
+      "schemaVersion": 1,
+      "stateSize": 40,
+      "retentionClass": "CYCLIC",
+      "migrationPolicy": "PRESERVE_ELAPSED"
+    }
+  ],
+  "ruleSet": {
+    "schema": "rule-set/v1",
+    "baseRevision": "1",
+    "changes": [
+      {
+        "op": "upsertRule",
+        "ruleId": "w5.pid-heat-permit",
+        "templateId": "thresholdHoldWithLatchedHysteresis",
+        "input": "temp.process",
+        "unit": "degC_x10",
+        "triggerAtOrAbove": 450,
+        "clearAtOrBelow": 440,
+        "bandLow": null,
+        "bandHigh": null,
+        "pulsePeriodMs": null,
+        "holdMs": 2500,
+        "requiredQuality": "GOOD",
+        "onInputFault": "COMMAND_OFF_AND_RESET",
+        "output": "tower.red",
+        "timingStateOnChange": "PRESERVE_ELAPSED",
+        "stableBlockId": 5001,
+        "blockType": "TON"
+      },
+      {
+        "op": "upsertRule",
+        "ruleId": "w5.pid-cycle-count",
+        "templateId": "counterTrigger",
+        "input": "temp.process",
+        "unit": "degC_x10",
+        "triggerAtOrAbove": 420,
+        "clearAtOrBelow": null,
+        "bandLow": null,
+        "bandHigh": null,
+        "pulsePeriodMs": null,
+        "holdMs": 2,
+        "requiredQuality": "GOOD",
+        "onInputFault": "COMMAND_OFF_AND_RESET",
+        "output": "tower.green",
+        "timingStateOnChange": "PRESERVE_ELAPSED",
+        "stableBlockId": 5002,
+        "blockType": "CTU"
+      }
+    ]
+  },
+  "wasmBase64": "AGFzbQEAAAABDQJgAAF/YAR/f39/AX8DBAMAAAEFBAEBAgIHMgQLZ2V0X3JlcV9idWYAAAtnZXRfcmVzX2J1ZgABCWV2YWxfc2NhbgACBm1lbW9yeQIACoYKAwUAQYAICwUAQYAoC/cJAgt/B34gA0E4SCABQcgASHIEQEF/DwsgACIHKAIAQdCYjYoFRwRAQX4PCyAHLwEEQQFHBEBBfQ8LIActAAgiAEEgSyAHLQAHIgxBIEtyBEBBfA8LIAEgDEEEdEHIAGogAEEobGpIBEBBeg8LIAcpAxQhESAHKQMcIRIgBykDJCETIAcpAywhFSAHKQM8IRQgAEEobEE4aiADSgRAQXsPCyACIgVBOGoiCyAHQcgAaiICIAxBBHRqIABBKGz8CgAAAkADQCAIIAxJBEAgAiAIQQR0aiIBKAIAQQFGDQIgCEEBaiEIDAELC0F/IQELIAFBAE4EfyABLQAIBUEBC0UhCiAAQSBJIQgCQANAIAAgBEsEQCALIAQiAkEobGooAgBBiSdGDQIgAkEBaiEEDAELC0F/IQILIAggAkEASHEEQCAAQShsQeAAaiADSgRAQXsPCyALIAAiAkEobGoiAEGJJzYCACAAQQA6AAQgAEEBOgAFIABBADoABiAAQQA6AAcgAEEAOgAIIABBADoACSAAQQA6AAogAEEAOgALIABBADYCDCAAQgA3AxAgAEIANwMYIABCADcDICACQQFqIQALIAJBAE4EfyALIAJBKGxqIg0tAAgaIA0tAAkhAiANLQAKIQggDSgCDCEOIA0pAxAhDyANKQMYIRAgCgRAIAEoAgQhASAIQQFGBEAgAUG4A0wEf0EAIQhBACECQgAhD0IAIRBBAAVBAiECIAFBwgNOCyEEBSABQcIDTgR/IAJBAUcEQEEBIQIgFSAQfUIAIBAgFVgbIQ8FIBUgD31CACAPIBVYGyEQC0EBIQQgEEKA8ouoCVoEf0ECIQJBAQUgCAsFQQAhAkEAIQRCACEPQgAhEEEACyEICwVBACEEQQAhAkEAIQhCACEPQgAhEAsgDSAEOgAIIA0gAjoACSANIAg6AAogDSAONgIMIA0gDzcDECANIBA3AxggCEEARwVBAAshBCAHQcgAaiEBAkADQCAJIAxJBEAgASAJQQR0aiICKAIAQQFGDQIgCUEBaiEJDAELC0F/IQILIAJBAE4EfyACLQAIBUEBC0UhByAAQSBJIQgCQANAIAAgBksEQCALIAYiAUEobGooAgBBiidGDQIgAUEBaiEGDAELC0F/IQELIAggAUEASHEEQCAAQShsQeAAaiADSgRAQXsPCyALIAAiAUEobGoiAEGKJzYCACAAQQM6AAQgAEEBOgAFIABBADoABiAAQQA6AAcgAEEAOgAIIABBADoACSAAQQA6AAogAEEAOgALIABBADYCDCAAQgA3AxAgAEIANwMYIABCADcDICABQQFqIQALIAFBAE4EQCALIAFBKGxqIggtAAghCSAILQAJIQMgCC0AChogCCgCDCEGIAgpAxAhDyAIKQMYIRAgBwR/IAZBAWogBiACKAIEQaQDTiIBIAlFcSAGQf////8HR3EbIgZBAk4FQQAhAUEAIQNCACEPQgAhEEEACyECIAggAToACCAIIAM6AAkgCCACOgAKIAggBjYCDCAIIA83AxAgCCAQNwMYIARBAnIgBCACGyEECyAFQdCYjZIFNgIAIAVBATsBBCAFQQA6AAYgBSAAOgAHIAUgETcDCCAFIBI3AxAgBSATNwMYIAUgFDcDICAFIAQ2AiggBUEDNgIsIAVBADYCMCAFQQA2AjQgAEEobEE4ags=",
+  "aotBase64": "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",
+  "jsSource": "\"use strict\";\nconst __RES_BACKING = new Uint8Array(4096);\nconst __RES_VIEW = new DataView(__RES_BACKING.buffer);\n\nfunction findSignal(rv, sigCount, targetId) {\n  let off = 72;\n  for (let i = 0; i < sigCount; i++) {\n    if (rv.getUint32(off, true) === targetId) return off;\n    off += 16;\n  }\n  return -1;\n}\n\nfunction findBlock(ov, blkCount, stableId) {\n  let off = 56;\n  for (let i = 0; i < blkCount; i++) {\n    if (ov.getUint32(off, true) === stableId) return i;\n    off += 40;\n  }\n  return -1;\n}\n\nglobalThis.evalScan = function(reqBytes) {\n  if (!(reqBytes instanceof Uint8Array) || reqBytes.byteLength < 72) {\n    throw new Error(\"bad EvalRequest\");\n  }\n  const rv = new DataView(reqBytes.buffer, reqBytes.byteOffset, reqBytes.byteLength);\n  if (rv.getUint32(0, true) !== 0x51434c50) throw new Error(\"bad magic\");\n  if (rv.getUint16(4, true) !== 1) throw new Error(\"bad abi\");\n  const sigCount = reqBytes[7];\n  const inBlkCount = reqBytes[8];\n  if (sigCount > 32 || inBlkCount > 32) throw new Error(\"limits exceeded\");\n  const inBlkStart = 72 + sigCount * 16;\n  const inBlkBytes = inBlkCount * 40;\n  if (reqBytes.byteLength < inBlkStart + inBlkBytes) {\n    throw new Error(\"truncated EvalRequest\");\n  }\n  const leaseEpoch = rv.getBigUint64(20, true);\n  const generation = rv.getBigUint64(28, true);\n  const scanId = rv.getBigUint64(36, true);\n  const logicalNs = rv.getBigUint64(44, true);\n  const stateRev = rv.getBigUint64(60, true);\n\n  const outBytes = __RES_BACKING;\n  const outView = __RES_VIEW;\n  for (let i = 0; i < inBlkBytes; i++) {\n    outBytes[56 + i] = reqBytes[inBlkStart + i];\n  }\n\n  let outBlkCount = inBlkCount;\n  let desiredMask = 0;\n  let validMask = 0;\n\n  \n    // Rule: w5.pid-heat-permit -> tower.red\n    {\n      validMask = (validMask | 1) >>> 0;\n      const sigOff = findSignal(rv, sigCount, 1);\n      const qualOk = sigOff >= 0 && reqBytes[sigOff + 8] === 0;\n      let blkIdx = findBlock(outView, outBlkCount, 5001);\n      if (blkIdx < 0 && outBlkCount < 32) {\n        if (56 + (outBlkCount + 1) * 40 > outBytes.byteLength) {\n          throw new Error(\"response buffer overflow\");\n        }\n        blkIdx = outBlkCount;\n        const b = 56 + blkIdx * 40;\n        outView.setUint32(b, 5001, true);\n        outBytes[b + 4] = 0;\n        outBytes[b + 5] = 1;\n        outBytes[b + 6] = 0;\n        outBytes[b + 7] = 0;\n        outBytes[b + 8] = 0;\n        outBytes[b + 9] = 0;\n        outBytes[b + 10] = 0;\n        outBytes[b + 11] = 0;\n        outView.setInt32(b + 12, 0, true);\n        outView.setBigUint64(b + 16, 0n, true);\n        outView.setBigUint64(b + 24, 0n, true);\n        outView.setBigInt64(b + 32, 0n, true);\n        outBlkCount += 1;\n      }\n      if (blkIdx >= 0) {\n        const b = 56 + blkIdx * 40;\n        let prevCond = outBytes[b + 8];\n        let phase = outBytes[b + 9];\n        let lastOut = outBytes[b + 10];\n        let countParam = outView.getInt32(b + 12, true);\n        let startNs = outView.getBigUint64(b + 16, true);\n        let elapsedNs = outView.getBigUint64(b + 24, true);\n        if (!qualOk) {\n          if (true) {\n            prevCond = 0; phase = 0; lastOut = 0; startNs = 0n; elapsedNs = 0n;\n          } else {\n            lastOut = 0;\n          }\n        } else {\n          const val = rv.getInt32(sigOff + 4, true);\n          \n      if (lastOut === 1) {\n        if (val <= 440) {\n          lastOut = 0; phase = 0; prevCond = 0; startNs = 0n; elapsedNs = 0n;\n        } else {\n          phase = 2; prevCond = val >= 450 ? 1 : 0;\n        }\n      } else {\n        if (val >= 450) {\n          if (2500000000n === 0n) {\n            phase = 2; lastOut = 1; prevCond = 1; startNs = logicalNs; elapsedNs = 0n;\n          } else if (phase !== 1) {\n            phase = 1; prevCond = 1;\n            startNs = logicalNs >= elapsedNs ? (logicalNs - elapsedNs) : 0n;\n            if (elapsedNs >= 2500000000n) { phase = 2; lastOut = 1; }\n          } else {\n            elapsedNs = logicalNs >= startNs ? (logicalNs - startNs) : 0n;\n            prevCond = 1;\n            if (elapsedNs >= 2500000000n) { phase = 2; lastOut = 1; }\n          }\n        } else {\n          phase = 0; prevCond = 0; lastOut = 0; startNs = 0n; elapsedNs = 0n;\n        }\n      }\n        }\n        outBytes[b + 8] = prevCond;\n        outBytes[b + 9] = phase;\n        outBytes[b + 10] = lastOut;\n        outView.setInt32(b + 12, countParam, true);\n        outView.setBigUint64(b + 16, startNs, true);\n        outView.setBigUint64(b + 24, elapsedNs, true);\n        if (lastOut !== 0) {\n          desiredMask = (desiredMask | 1) >>> 0;\n        }\n      }\n    }\n\n    // Rule: w5.pid-cycle-count -> tower.green\n    {\n      validMask = (validMask | 2) >>> 0;\n      const sigOff = findSignal(rv, sigCount, 1);\n      const qualOk = sigOff >= 0 && reqBytes[sigOff + 8] === 0;\n      let blkIdx = findBlock(outView, outBlkCount, 5002);\n      if (blkIdx < 0 && outBlkCount < 32) {\n        if (56 + (outBlkCount + 1) * 40 > outBytes.byteLength) {\n          throw new Error(\"response buffer overflow\");\n        }\n        blkIdx = outBlkCount;\n        const b = 56 + blkIdx * 40;\n        outView.setUint32(b, 5002, true);\n        outBytes[b + 4] = 3;\n        outBytes[b + 5] = 1;\n        outBytes[b + 6] = 0;\n        outBytes[b + 7] = 0;\n        outBytes[b + 8] = 0;\n        outBytes[b + 9] = 0;\n        outBytes[b + 10] = 0;\n        outBytes[b + 11] = 0;\n        outView.setInt32(b + 12, 0, true);\n        outView.setBigUint64(b + 16, 0n, true);\n        outView.setBigUint64(b + 24, 0n, true);\n        outView.setBigInt64(b + 32, 0n, true);\n        outBlkCount += 1;\n      }\n      if (blkIdx >= 0) {\n        const b = 56 + blkIdx * 40;\n        let prevCond = outBytes[b + 8];\n        let phase = outBytes[b + 9];\n        let lastOut = outBytes[b + 10];\n        let countParam = outView.getInt32(b + 12, true);\n        let startNs = outView.getBigUint64(b + 16, true);\n        let elapsedNs = outView.getBigUint64(b + 24, true);\n        if (!qualOk) {\n          if (true) {\n            prevCond = 0; phase = 0; lastOut = 0; startNs = 0n; elapsedNs = 0n;\n          } else {\n            lastOut = 0;\n          }\n        } else {\n          const val = rv.getInt32(sigOff + 4, true);\n          \n      const cond = val >= 420;\n      if (cond && prevCond === 0 && countParam < 0x7fffffff) { countParam = (countParam + 1) | 0; }\n      prevCond = cond ? 1 : 0;\n      lastOut = countParam >= 2 ? 1 : 0;\n        }\n        outBytes[b + 8] = prevCond;\n        outBytes[b + 9] = phase;\n        outBytes[b + 10] = lastOut;\n        outView.setInt32(b + 12, countParam, true);\n        outView.setBigUint64(b + 16, startNs, true);\n        outView.setBigUint64(b + 24, elapsedNs, true);\n        if (lastOut !== 0) {\n          desiredMask = (desiredMask | 2) >>> 0;\n        }\n      }\n    }\n\n  outView.setUint32(0, 0x52434c50, true);\n  outView.setUint16(4, 1, true);\n  outBytes[6] = 0;\n  outBytes[7] = outBlkCount;\n  outView.setBigUint64(8, leaseEpoch, true);\n  outView.setBigUint64(16, generation, true);\n  outView.setBigUint64(24, scanId, true);\n  outView.setBigUint64(32, stateRev, true);\n  outView.setUint32(40, desiredMask >>> 0, true);\n  outView.setUint32(44, validMask >>> 0, true);\n  outView.setUint32(48, 0, true);\n  outView.setUint32(52, 0, true);\n\n  return outBytes.subarray(0, 56 + outBlkCount * 40);\n};\n",
+  "signatureHex": "71bd1bc5172b916006e714c05dc9ed990be041de130b7ac02f77bb3054320be2f1d42c303aa85db717468f6053827043c1e6a515d5dc2250244301d78d6b010f",
+  "publicKeyHex": "afe28ce4aabaca4d144a87fd279774a27a4e93d21bee7a2742883b54ac079d8f"
+}

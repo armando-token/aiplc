@@ -1,0 +1,43 @@
+{
+  "cycleDurNs": {
+    "count": 350,
+    "maxNs": 617750,
+    "meanNs": 427461,
+    "minNs": 348833,
+    "p50Ns": 415334,
+    "p95Ns": 543958,
+    "p999Ns": 617750,
+    "p99Ns": 564959
+  },
+  "deadlineMisses": 0,
+  "droppedSamples": 0,
+  "engine": "a1-aot",
+  "evalDurNs": {
+    "count": 350,
+    "maxNs": 593833,
+    "meanNs": 414322,
+    "minNs": 337750,
+    "p50Ns": 400750,
+    "p95Ns": 529375,
+    "p999Ns": 593833,
+    "p99Ns": 550667
+  },
+  "maxTempSocMc": 46980,
+  "minMemAvailableKb": 364424,
+  "mode": "active",
+  "peakPssKb": 1327,
+  "peakRssKb": 2308,
+  "runId": "a1-aot-W5-active",
+  "totalScans": 350,
+  "wakeupJitterNs": {
+    "count": 350,
+    "maxNs": 65944,
+    "meanNs": 41340,
+    "minNs": 27159,
+    "p50Ns": 38822,
+    "p95Ns": 57995,
+    "p999Ns": 65944,
+    "p99Ns": 63877
+  },
+  "workload": "W5"
+}

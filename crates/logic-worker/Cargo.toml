@@ -1,0 +1,27 @@
+[package]
+name = "logic-worker"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "plc-worker"
+path = "src/main.rs"
+
+[features]
+default = ["wamr", "quickjs"]
+wamr = []
+quickjs = []
+wasmtime-engine = ["dep:wasmtime"]
+
+[dependencies]
+control-abi = { path = "../control-abi" }
+libc.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+thiserror.workspace = true
+wasmtime = { version = "27", optional = true, default-features = false, features = ["cranelift", "pulley", "runtime"] }
+
+[build-dependencies]
+cc = "1.2"

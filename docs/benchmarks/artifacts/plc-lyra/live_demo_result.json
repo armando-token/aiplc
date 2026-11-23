@@ -1,0 +1,22 @@
+{
+  "consoleServed": true,
+  "rev0": "1",
+  "revAfterM2": "2",
+  "revAfterRollback": "3",
+  "evidence": {
+    "activePersisted": true,
+    "activeRevision": "3",
+    "appliedMask": 0,
+    "bootId": "1777326232682113307",
+    "desiredMask": 0,
+    "driverApplied": "APPLIED",
+    "expiresAtNs": "6900071293669",
+    "guardReason": "NONE",
+    "observedAtNs": "6900033012489",
+    "outputSeq": "15",
+    "physicalObservationSource": "gpio-chardev-v2-readback",
+    "physicalObservedMask": 0,
+    "scanId": "15",
+    "selectedInScan": true
+  }
+}

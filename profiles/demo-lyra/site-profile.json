@@ -1,0 +1,72 @@
+{
+  "schema": "site-profile/v1",
+  "deviceId": "lyra-bench-01",
+  "profileId": "demo-lyra",
+  "profileVersion": "1.0.0",
+  "scanPeriodMs": 20,
+  "altScanPeriodMs": 50,
+  "sampleDeadlineMs": 2,
+  "evalDeadlineMs": 10,
+  "publishDeadlineMs": 13,
+  "allowedPhysicalMask": 3,
+  "safeFallbackMask": 0,
+  "channels": [
+    {
+      "name": "tower.red",
+      "maskBit": 0,
+      "physical": true,
+      "gpioChip": "/dev/gpiochip0",
+      "gpioOffset": 17,
+      "activeLow": false,
+      "dwellMs": 500,
+      "maxTransitionsPerWindow": 6,
+      "transitionWindowMs": 10000
+    },
+    {
+      "name": "tower.green",
+      "maskBit": 1,
+      "physical": true,
+      "gpioChip": "/dev/gpiochip0",
+      "gpioOffset": 18,
+      "activeLow": false,
+      "dwellMs": 500,
+      "maxTransitionsPerWindow": 6,
+      "transitionWindowMs": 10000
+    },
+    {
+      "name": "tower.blue",
+      "maskBit": 2,
+      "physical": false,
+      "gpioChip": null,
+      "gpioOffset": null,
+      "activeLow": false,
+      "dwellMs": 0,
+      "maxTransitionsPerWindow": 100,
+      "transitionWindowMs": 10000
+    }
+  ],
+  "sensors": [
+    {
+      "name": "temp.process",
+      "signalId": 1,
+      "unit": "degC_x10",
+      "minValid": -400,
+      "maxValid": 1250,
+      "abnormalSentinel": 32767,
+      "pollIntervalMs": 500,
+      "freshnessTtlMs": 1500,
+      "devicePath": "/dev/ttyS2",
+      "slaveAddr": 1,
+      "baudRate": 9600
+    }
+  ],
+  "interlocks": [
+    {
+      "name": "red_excludes_blue_prealarm",
+      "forbiddenMask": 5,
+      "reason": "alarm_excludes_prealarm"
+    }
+  ],
+  "signatureHex": "33e6d334856a976401d7217153d10a9002fe93495fbf06c1ddb086d99582f596ed8526e0ff91a7e361bbbc11b49fc593b1c56fc505ae7572803a3dc82adac508",
+  "publicKeyHex": "afe28ce4aabaca4d144a87fd279774a27a4e93d21bee7a2742883b54ac079d8f"
+}

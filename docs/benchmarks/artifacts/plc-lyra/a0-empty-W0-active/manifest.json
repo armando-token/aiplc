@@ -1,0 +1,13 @@
+{
+  "runId": "a0-empty-W0-active",
+  "hostId": "luckfox",
+  "kernel": "6.1.99",
+  "arch": "arm",
+  "engine": "a0-empty",
+  "workload": "W0",
+  "mode": "active",
+  "startedUnixS": 1777325947,
+  "totalScans": 400,
+  "deadlineMisses": 0,
+  "rtScheduler": "SCHED_FIFO(prio=55)"
+}

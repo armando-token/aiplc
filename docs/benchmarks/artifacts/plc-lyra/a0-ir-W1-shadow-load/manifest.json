@@ -1,0 +1,13 @@
+{
+  "runId": "a0-ir-W1-shadow-load",
+  "hostId": "luckfox",
+  "kernel": "6.1.99",
+  "arch": "arm",
+  "engine": "a0-ir",
+  "workload": "W1",
+  "mode": "shadow-load",
+  "startedUnixS": 1777326139,
+  "totalScans": 350,
+  "deadlineMisses": 0,
+  "rtScheduler": "SCHED_FIFO(prio=55)"
+}

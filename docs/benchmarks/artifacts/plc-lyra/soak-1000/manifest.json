@@ -1,0 +1,13 @@
+{
+  "runId": "soak-1000",
+  "hostId": "luckfox",
+  "kernel": "6.1.99",
+  "arch": "arm",
+  "engine": "wamr-aot",
+  "workload": "M1-M2-swap-rollback",
+  "mode": "soak",
+  "startedUnixS": 1777326231,
+  "totalScans": 1000,
+  "deadlineMisses": 0,
+  "rtScheduler": "SOAK"
+}

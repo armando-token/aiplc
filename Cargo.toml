@@ -1,0 +1,23 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/control-abi",
+    "crates/field-io",
+    "crates/logic-worker",
+    "crates/supervisor",
+    "crates/plc-bench",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+
+[workspace.dependencies]
+ed25519-dalek = { version = "2.1", features = ["rand_core"] }
+libc = "0.2"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+sha2 = "0.10"
+thiserror = "2.0"
+crc32fast = "1.4"
