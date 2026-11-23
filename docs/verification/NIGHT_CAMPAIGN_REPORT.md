@@ -28,7 +28,7 @@
 | **Gate 2 — Baseline 10 min** | Dominio RT (`scan-rt` `SCHED_FIFO 50`) + `NightTelemetryAggregator` + `StorageWriter` | `gate2_decoupled_concurrent...` (`PASS`) | `gate2-baseline-10m` (`600 s`, `30,002 scans`) | `wakeupJitter p99=68 µs (0.068 ms)`, `max=106.079 µs`; `cycleDur p99=564 µs`, `max=1.378 ms`; `0` drops | **PASS (`wakeupJitter`), `cycleDur` `0.564 ms` p99** |
 | **Gate 2 — Carga 3 min** | Pool HTTP acotado (`429 BUSY`), swaps O(1) en frontera, rollback cálido y WAL off-scan | `gate2_decoupled_concurrent...` (`PASS`) | `gate2-load-3m` (`185 s`, `9,251 scans`, `10,858` req HTTP, 3 ciclos swap+rollback, Shadow vivo) | `wakeupJitter p99=176 µs`, `max=1.324 ms`; `ramSwap p50=248 µs`; `journalPersist max=47.4 ms` (`0` misses!) | **PASS (`0` misses, `0` drops)** |
 | **Gate 2 — WAL & `SIGKILL`** | `BoundaryEpochTracker(boot_id, rev, lease_epoch)`, propagación `503 STORAGE_DEGRADED`, recuperación única en `main.rs` | `gate2_delayed_wal_supersede...` + `gate2_silent_night...` + `d03_real_sigkill...` (`PASS`) | `caseA_crash_before_persisted` (`_exit(99)`) + `caseB_sigkill_after_stable` (`kill -9`) | `caseA`: `rev=1 armed=false needsOperatorReview=true`; `caseB`: `rev=2 armed=false needsOperatorReview=false activePersisted=true` | **PASS** |
-| **Gate 2 — Estabilidad 24 h** | Daemon detached (`setsid`), puerto aislado `127.0.0.1:18445`, `stop_24h.sh` por PGID | N/A | `/userdata/plc-auto/night/night-lyra-v1-24h` lanzado y verificado a 30 s | `PID=2270`, `PGID=2270`, `workerPid=2275`, `scanId@30s=1655`, `missedReleases=0`, `lyra-plc=active` | **EN CURSO** |
+| **Gate 2 — Estabilidad 24 h** | Daemon detached (`setsid`), puerto aislado `127.0.0.1:18445`, `stop_24h.sh` por PGID | N/A | `/userdata/plc-auto/night/night-lyra-v1-24h` (`07:48:11`, detención limpia a solicitud) | `1,404,535 scans`, `0` misses/drops, `wakeupJitter p99=76 µs / max=593 µs`, `cycleDur p99=618 µs / max=2.363 ms`, `worker RSS=2,232 KiB` (`0` fuga), `lyra-plc=active` | **DETENIDO PARCIAL (07:48:11 / 32.5%)** |
 | **Gate 3 (iPad)** | [Hoja Gate 3](file:///Users/armandosilva/Projects/PLC_Lucky/docs/verification/GATE3_IPAD_ACCESS_SHEET.md) | — | Prueba presencial con iPad en LAN/tailnet | — | **PENDIENTE** |
 | **Gate 4 (Instrumentos)** | [Hoja Gate 4](file:///Users/armandosilva/Projects/PLC_Lucky/docs/verification/GATE4_INSTRUMENTS_PHYSICAL_IO_SHEET.md) | — | Prueba presencial con relé, THT02 y osciloscopio | — | **PENDIENTE** |
 | **Gate 5 (Voz Offline)** | [Hoja Gate 5](file:///Users/armandosilva/Projects/PLC_Lucky/docs/verification/GATE5_OFFLINE_VOICE_SHEET.md) | — | Prueba presencial ASR offline → propuesta firmada | — | **PENDIENTE** |
@@ -88,18 +88,33 @@ Durante la primera ejecución de `n2_recovery` (`caseA_crash_before_persisted`) 
 
 ---
 
-## 5. Estado de la Corrida Silenciosa 24 Horas (`EN CURSO`)
+## 5. Estado de la Corrida Silenciosa 24 Horas (`DETENIDO PARCIAL`)
 
-- **Directorio en PLC**: `/userdata/plc-auto/night/night-lyra-v1-24h` (puerto loopback aislado `127.0.0.1:18445`, `virtual` I/O, `--no-lcd`, `--strict-sandbox`, `--rt-fifo`)
-- **PID Supervisor**: `2270` (`PGID = 2270`)
-- **PID Worker activo**: `2275` (`WAMR AoT`)
-- **Inicio Host**: `2026-11-23 01:30:00 PST` (`2026-11-23T09:30:00Z`) → **ETA fin Host**: `2026-11-24 01:30:00 PST` (`2026-11-24T09:30:00Z`)
-- **Inicio Reloj PLC (UTC)**: `2026-04-27T23:24:57Z` → **ETA fin Reloj PLC (UTC)**: `2026-04-28T23:24:57Z`
-- **Verificación a +30 s**: `scanId = 1655`, `missedReleases = 0`, `lyra-plc.service = active`
-- **Log supervisor**: `/userdata/plc-auto/night/night-lyra-v1-24h/supervisor_24h.log`
-- **Métricas acumuladas**: `/userdata/plc-auto/night/night-lyra-v1-24h/metrics/gate2-24h` (`summary.json`, `histograms.json`, `samples.csv`, `anomalies.csv`, `events.jsonl`)
-- **Comandos de inspección / detención segura** (nunca detienen `lyra-plc.service`):
-  - Inspección de métricas en curso:
-    `ssh luckfox-usb "cat /userdata/plc-auto/night/night-lyra-v1-24h/metrics/gate2-24h/summary.json"`
-  - Detener solo la corrida 24 h limpiamente:
-    `ssh luckfox-usb "/userdata/plc-auto/night/night-lyra-v1-24h/stop_24h.sh"`
+Detenida limpiamente a solicitud del usuario mediante `stop_24h.sh` (`PGID = 2270` terminado; `0` procesos `plc-supervisor`/`plc-worker` activos; puerto `127.0.0.1:18445` cerrado; `lyra-plc.service = active` intacto) para retomar más tarde.
+
+- **Estado y avance alcanzado**: **`DETENIDO_PARCIAL`** — **`07:48:11`** (`28,091 s`, **`32.51 %`** del objetivo de `24 h`)
+- **Ventana Host**: `2026-11-23 01:30:00 PST` (`2026-11-23T09:30:00Z`) → **`2026-11-23 09:17:38 PST`** (`2026-11-23T17:17:38Z`)
+- **Ventana Reloj PLC (UTC)**: `2026-04-27T23:24:57Z` → **`2026-04-28T07:12:33Z`**
+- **Procesos ejecutados (ya detenidos)**: Supervisor `PID 2270` (`PGID = 2270`), Worker `PID 2275` (`WAMR AoT`, `nobody`, `Seccomp=2`)
+- **Contadores finales (`1,404,535` scans @ `20 ms`)**:
+  - `scansTotal = 1,404,535`
+  - `deadlineMisses = 0`, `missedReleases = 0`, `telemetryDropped = 0`, `shadowDropped = 0`, `warmRollbackCount = 0`
+  - `fallbackLatchCount = 1`: ocurrió exclusivamente en `scanId = 1,404,534` durante la parada controlada (`stop_24h.sh` → `kill -TERM -2270`) cuando `plc-worker` cerró su tubería IPC (`Broken pipe, os error 32`) milisegundos antes de que `plc-supervisor` terminara; **`0` fallos durante toda la ventana operativa de `07:48:11`**.
+- **Latencias finales acumuladas**:
+  - `wakeup_jitter_ns`: p50 = `42,000 ns`, p95 = `58,000 ns`, **p99 = `76,000 ns` (`0.076 ms`)**, p99.9 = `104,000 ns`, **max = `592,585 ns` (`0.593 ms`)**
+  - `eval_ipc_ns`: p50 = `420,000 ns`, p95 = `508,000 ns`, p99 = `564,000 ns`, p99.9 = `616,000 ns`, max = `985,542 ns`
+  - `publish_ns`: p50 = `16,000 ns`, p95 = `20,000 ns`, p99 = `56,000 ns`, p99.9 = `84,000 ns`, max = `1,926,750 ns`
+  - `cycle_dur_ns`: p50 = `466,000 ns`, p95 = `560,000 ns`, **p99 = `618,000 ns` (`0.618 ms`)**, p99.9 = `676,000 ns`, **max = `2,363,084 ns` (`2.363 ms`)**
+- **Memoria y SoC (`scan 1` → `scan 1,404,500`)**:
+  - **Worker (`plc-worker`)**: `RSS 2,232 → 2,232 KiB`, `PSS 1,226 → 1,230 KiB` (**completamente plano tras `1.40M` scans, `0` fugas**)
+  - **Supervisor (`plc-supervisor`)**: `RSS 3,932 → 37,396 KiB` (`PSS 2,810 → 36,278 KiB`), `MemAvailable 359,144 → 325,032 KiB` (`~317 MiB` libres), `temp_soc_mc 54,702 → 48,168` (`48.2 °C`). El crecimiento lineal del RSS del supervisor proviene de `VirtualBenchState.history.push(...)` sin acotar en `crates/field-io/src/driver.rs` (solo driver virtual de benchmark, no afecta a `LyraHardwareDriver`).
+- **Archivos archivados en el repositorio**:
+  - [status run_24h_status.json](file:///Users/armandosilva/Projects/PLC_Lucky/docs/benchmarks/artifacts/night/night-lyra-v1/run_24h_status.json)
+  - [summary.json](file:///Users/armandosilva/Projects/PLC_Lucky/docs/benchmarks/artifacts/night/night-lyra-v1/gate2-24h-partial/summary.json)
+  - [samples.csv](file:///Users/armandosilva/Projects/PLC_Lucky/docs/benchmarks/artifacts/night/night-lyra-v1/gate2-24h-partial/samples.csv)
+  - [events.jsonl](file:///Users/armandosilva/Projects/PLC_Lucky/docs/benchmarks/artifacts/night/night-lyra-v1/gate2-24h-partial/events.jsonl)
+- **CSVs crudos pesados conservados en la Luckfox** (fuera de Git por tamaño):
+  - `/userdata/plc-auto/night/night-lyra-v1-24h/metrics/gate2-24h/anomalies.csv` (`62,076,446` bytes, `1,404,534` líneas)
+  - `/userdata/plc-auto/night/night-lyra-v1-24h/metrics/gate2-24h/scans.csv` (`8,088,541` bytes, `100,001` líneas)
+- **Nota para retomar / relanzar mañana o más tarde**:
+  - Antes de lanzar una nueva corrida completa de `24 h` en modo `virtual`, se recomienda acotar `VirtualBenchState.history` en `crates/field-io/src/driver.rs` para que también el RSS de `plc-supervisor` permanezca plano. Para relanzar en limpio basta iniciar una nueva corrida `--stop-after-s 86400` bajo un nuevo `run-id` en `/userdata/plc-auto/night/` sin tocar `lyra-plc.service`.
