@@ -1,0 +1,2 @@
+9e6ad9cbe1b581d9f484c3d4e88e1094a24f4ab67f2f9051c94cc03cafcdac32  /Users/armandosilva/Projects/PLC_Lucky/target/armv7-unknown-linux-gnueabihf/release/plc-supervisor
+93a8e33be8af6c6ed82faaa5a09e87136e0838d2e58ce62111a11e263aec4e36  /Users/armandosilva/Projects/PLC_Lucky/target/armv7-unknown-linux-gnueabihf/release/plc-worker

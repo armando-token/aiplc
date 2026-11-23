@@ -1,0 +1,81 @@
+{
+  "runId": "gate2-load-3m",
+  "deviceId": "lyra-bench-01",
+  "bootId": 1777331863446059066,
+  "ioMode": "virtual",
+  "serialBackend": "none",
+  "lcdEnabled": false,
+  "scansTotal": 9251,
+  "deadlineMisses": 0,
+  "missedReleases": 0,
+  "telemetryDropped": 0,
+  "shadowDropped": 0,
+  "warmRollbackCount": 3,
+  "fallbackLatchCount": 0,
+  "wakeupJitter": {
+    "count": 9251,
+    "p50Ns": 60000,
+    "p95Ns": 94000,
+    "p99Ns": 176000,
+    "p999Ns": 286000,
+    "maxNs": 1324291
+  },
+  "evalIpc": {
+    "count": 9251,
+    "p50Ns": 414000,
+    "p95Ns": 578000,
+    "p99Ns": 708000,
+    "p999Ns": 912000,
+    "maxNs": 3384209
+  },
+  "publish": {
+    "count": 9251,
+    "p50Ns": 12000,
+    "p95Ns": 30000,
+    "p99Ns": 316000,
+    "p999Ns": 1325000,
+    "maxNs": 5964292
+  },
+  "cycleDur": {
+    "count": 9251,
+    "p50Ns": 478000,
+    "p95Ns": 692000,
+    "p99Ns": 940000,
+    "p999Ns": 2650000,
+    "maxNs": 8516376
+  },
+  "ramSwap": {
+    "count": 6,
+    "p50Ns": 248000,
+    "p95Ns": 1124958,
+    "p99Ns": 1124958,
+    "p999Ns": 1124958,
+    "maxNs": 1124958
+  },
+  "journalPersistLastNs": 38588170,
+  "journalPersistMaxNs": 47397713,
+  "latestSample": {
+    "tsUnixMs": 1777332047588,
+    "scanId": 9200,
+    "supervisorRssKb": 13100,
+    "supervisorPssKb": 11974,
+    "workerRssKb": 2232,
+    "workerPssKb": 752,
+    "memAvailableKb": 337796,
+    "tempSocMc": 57673
+  },
+  "firstJitterCounterexample": {
+    "scanId": 1,
+    "wakeupJitterNs": 38668,
+    "evalIpcNs": 460250,
+    "publishNs": 15167,
+    "cycleDurNs": 502834,
+    "ramSwapNs": 0,
+    "deadlineMiss": false,
+    "activeWorkerPid": 703,
+    "memAvailableKb": 352696,
+    "supervisorRssKb": 3936,
+    "workerRssKb": 2232,
+    "tempSocMc": 53514
+  }
+}

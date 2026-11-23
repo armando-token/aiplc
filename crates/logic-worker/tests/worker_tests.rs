@@ -210,5 +210,129 @@ fn ipc_worker_process_evaluates_and_respects_timeout_and_bad_frames() {
         Duration::from_millis(50),
     );
     assert!(err3.is_err());
+    assert!(bad_client.is_tainted());
     bad_client.revoke_and_kill();
+}
+
+#[test]
+fn ipc_write_backpressure_triggers_deadline_without_blocking() {
+    use std::os::unix::net::UnixStream;
+    use std::time::Instant;
+    use control_abi::wire::IpcMessageType;
+    use logic_worker::{write_frame_until, WorkerError};
+
+    // Peer `rx_sock` intentionally never reads -> kernel send buffer saturates cleanly
+    let (mut tx_sock, _rx_sock) = UnixStream::pair().unwrap();
+    tx_sock.set_nonblocking(true).unwrap();
+
+    let payload = vec![0x5Au8; 16 * 1024 - 16];
+    let mut scratch = Vec::new();
+    let mut hit_deadline = false;
+    let start = Instant::now();
+    for _ in 0..256 {
+        let dl = Instant::now() + Duration::from_millis(12);
+        match write_frame_until(&mut tx_sock, &mut scratch, IpcMessageType::EvalReq, &payload, dl) {
+            Ok(()) => continue,
+            Err(WorkerError::DeadlineExceeded) => {
+                hit_deadline = true;
+                break;
+            }
+            Err(e) => panic!("unexpected write error: {e}"),
+        }
+    }
+    assert!(hit_deadline, "expected write_frame_until to enforce POLLOUT deadline under backpressure");
+    assert!(
+        start.elapsed() < Duration::from_millis(500),
+        "write backpressure blocked too long: {:?}",
+        start.elapsed()
+    );
+
+    // Also test against real plc-worker --fault-backpressure child process
+    let worker_bin = PathBuf::from(env!("CARGO_BIN_EXE_plc-worker"));
+    let pub_hex = load_pub_key();
+    let pkg = load_pkg("M1.darwin-arm64.json");
+    let init = WorkerInitPayload {
+        engine: EngineKind::WamrAot,
+        package: pkg,
+        trusted_pub_hex: pub_hex,
+        eval_budget_ns: 5_000_000,
+        sandbox: WorkerSandboxParams {
+            slot_name: "bp-slot".into(),
+            memory_max_bytes: 16 * 1024 * 1024,
+            drop_to_nobody: false,
+            enable_seccomp: false,
+        },
+    };
+    let mut bp_client =
+        WorkerProcessClient::spawn(&worker_bin, &init, &["--fault-backpressure"]).unwrap();
+    let t0 = Instant::now();
+    let res = bp_client.eval_within(
+        &make_req(10, 0, 450, SignalQuality::Good, vec![]),
+        Duration::from_millis(15),
+    );
+    assert!(res.is_err());
+    assert!(t0.elapsed() < Duration::from_millis(100));
+    assert!(bp_client.is_tainted());
+    bp_client.revoke_and_kill();
+}
+
+#[test]
+fn ipc_partial_eof_and_slow_worker_taint_stream_without_late_reply_corruption() {
+    use std::time::Instant;
+    use logic_worker::WorkerError;
+
+    let worker_bin = PathBuf::from(env!("CARGO_BIN_EXE_plc-worker"));
+    let pub_hex = load_pub_key();
+    let pkg = load_pkg("M1.darwin-arm64.json");
+    let init = WorkerInitPayload {
+        engine: EngineKind::WamrAot,
+        package: pkg,
+        trusted_pub_hex: pub_hex,
+        eval_budget_ns: 5_000_000,
+        sandbox: WorkerSandboxParams {
+            slot_name: "partial-eof-slot".into(),
+            memory_max_bytes: 16 * 1024 * 1024,
+            drop_to_nobody: false,
+            enable_seccomp: false,
+        },
+    };
+
+    // Partial frame + abrupt EOF
+    let mut pe_client =
+        WorkerProcessClient::spawn(&worker_bin, &init, &["--fault-partial-eof"]).unwrap();
+    let err = pe_client
+        .eval_within(
+            &make_req(1, 0, 450, SignalQuality::Good, vec![]),
+            Duration::from_millis(50),
+        )
+        .unwrap_err();
+    assert!(matches!(err, WorkerError::Ipc(_) | WorkerError::DeadlineExceeded));
+    assert!(pe_client.is_tainted());
+    // Subsequent eval MUST immediately fail on tainted stream rather than reading stale/garbage bytes
+    assert!(pe_client
+        .eval_within(
+            &make_req(2, 0, 450, SignalQuality::Good, vec![]),
+            Duration::from_millis(10),
+        )
+        .is_err());
+    pe_client.revoke_and_kill();
+
+    // Slow worker exceeding cutoff (80ms delay vs 5ms cutoff)
+    let mut slow_client = WorkerProcessClient::spawn(
+        &worker_bin,
+        &init,
+        &["--fault-slow-ms", "80"],
+    )
+    .unwrap();
+    let t0 = Instant::now();
+    let err_slow = slow_client
+        .eval_until(
+            &make_req(3, 0, 450, SignalQuality::Good, vec![]),
+            Instant::now() + Duration::from_millis(6),
+        )
+        .unwrap_err();
+    assert!(matches!(err_slow, WorkerError::DeadlineExceeded));
+    assert!(t0.elapsed() < Duration::from_millis(40));
+    assert!(slow_client.is_tainted());
+    slow_client.revoke_and_kill();
 }

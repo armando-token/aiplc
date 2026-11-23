@@ -1,0 +1,16 @@
+{
+  "status": "EN CURSO",
+  "dir": "/userdata/plc-auto/night/night-lyra-v1-24h",
+  "pid": 2270,
+  "pgid": 2270,
+  "workerPid": 2275,
+  "hostStartLocal": "2026-11-23 01:30:00 PST",
+  "hostStartUtc": "2026-11-23T09:30:00Z",
+  "plcStartUtc": "2026-04-27T23:24:57Z",
+  "scanIdAt30s": 1655,
+  "missedReleasesAt30s": 0,
+  "lyraService": "active",
+  "stopScript": "/userdata/plc-auto/night/night-lyra-v1-24h/stop_24h.sh",
+  "log": "/userdata/plc-auto/night/night-lyra-v1-24h/supervisor_24h.log",
+  "metricsDir": "/userdata/plc-auto/night/night-lyra-v1-24h/metrics/gate2-24h"
+}
