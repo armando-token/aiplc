@@ -1,0 +1,21 @@
+# Rust
+target/
+**/*.rs.bk
+
+# Node / TypeScript
+node_modules/
+**/dist/
+**/.tsbuildinfo
+
+# Swift
+apps/ipad/.build/
+apps/ipad/.swiftpm/
+
+# Artifacts & logs
+third_party/
+*.wasm
+*.aot
+!profiles/**/golden/*.wasm
+tmp/
+.DS_Store
+*.log
