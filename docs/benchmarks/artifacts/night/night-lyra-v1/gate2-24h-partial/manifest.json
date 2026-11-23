@@ -1,0 +1,14 @@
+{
+  "bootId": 1777332264313306802,
+  "deviceId": "lyra-bench-01",
+  "evalDeadlineMs": 10,
+  "ioMode": "virtual",
+  "isolatedWorker": true,
+  "lcdEnabled": false,
+  "pid": 2270,
+  "runId": "gate2-24h",
+  "scanPeriodMs": 20,
+  "serialBackend": "none",
+  "startedUnixMs": 1777332264419,
+  "strictSandbox": true
+}

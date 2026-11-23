@@ -108,7 +108,10 @@ pub fn attach_cgroup_v2(
             return Err(SandboxError::StageFailed("cgroup2", "empty slot name".into()));
         }
         // Ensure memory and cpu controllers are enabled in root subtree_control
-        let _ = fs::write(root.join("cgroup.subtree_control"), "+memory +cpu");
+        if fs::write(root.join("cgroup.subtree_control"), "+memory +cpu").is_err() {
+            let _ = fs::write(root.join("cgroup.subtree_control"), "+memory");
+            let _ = fs::write(root.join("cgroup.subtree_control"), "+cpu");
+        }
         let cg_dir = root.join(format!("plc-worker-{sanitized}"));
         fs::create_dir_all(&cg_dir)?;
         fs::write(cg_dir.join("memory.max"), memory_max_bytes.to_string())?;

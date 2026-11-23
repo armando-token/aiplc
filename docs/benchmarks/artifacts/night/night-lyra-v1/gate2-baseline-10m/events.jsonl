@@ -1,0 +1,4 @@
+{"tsUnixMs":1777330938735,"scanId":0,"kind":"rt_fifo_enabled","detail":"SCHED_FIFO prio=50 active"}
+{"tsUnixMs":1777330938735,"scanId":0,"kind":"scan_loop_started","detail":"rev=1 worker_pid=3237 armed=false"}
+{"tsUnixMs":1777330938778,"scanId":2,"kind":"jitter_threshold_exceeded","detail":"{\"scanId\":2,\"wakeupJitterNs\":64629,\"evalIpcNs\":516541,\"publishNs\":16042,\"cycleDurNs\":562625,\"ramSwapNs\":0,\"deadlineMiss\":false,\"activeWorkerPid\":3237,\"memAvailableKb\":353540,\"supervisorRssKb\":3868,\"workerRssKb\":2232,\"tempSocMc\":51732}"}
+{"tsUnixMs":1777330938815,"scanId":4,"kind":"operator_rearm","detail":"rearmed control"}

@@ -10,7 +10,10 @@ pub use engine::{
 };
 #[cfg(feature = "wasmtime-engine")]
 pub use engine::wasmtime_impl::A3WasmtimeEngine;
-pub use ipc::{WorkerInitAck, WorkerInitPayload, WorkerProcessClient, WorkerSandboxParams};
+pub use ipc::{
+    read_runtime_frame_until, write_frame_until, WorkerInitAck, WorkerInitPayload,
+    WorkerProcessClient, WorkerSandboxParams,
+};
 pub use ir_eval::{evaluate_ruleset_a0, initial_blocks_for_ruleset};
 pub use sandbox::{
     attach_cgroup_v2, harden_worker_process, read_cgroup_mem_stats, CgroupMemStats, SandboxConfig,

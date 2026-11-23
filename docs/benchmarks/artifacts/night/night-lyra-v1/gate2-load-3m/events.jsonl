@@ -1,0 +1,10 @@
+{"tsUnixMs":1777331863584,"scanId":0,"kind":"rt_fifo_enabled","detail":"SCHED_FIFO prio=50 active"}
+{"tsUnixMs":1777331863584,"scanId":0,"kind":"scan_loop_started","detail":"rev=1 worker_pid=703 armed=false"}
+{"tsUnixMs":1777331863609,"scanId":1,"kind":"jitter_threshold_exceeded","detail":"{\"scanId\":1,\"wakeupJitterNs\":38668,\"evalIpcNs\":460250,\"publishNs\":15167,\"cycleDurNs\":502834,\"ramSwapNs\":0,\"deadlineMiss\":false,\"activeWorkerPid\":703,\"memAvailableKb\":352696,\"supervisorRssKb\":3936,\"workerRssKb\":2232,\"tempSocMc\":53514}"}
+{"tsUnixMs":1777331863644,"scanId":3,"kind":"operator_rearm","detail":"rearmed control"}
+{"tsUnixMs":1777331876004,"scanId":621,"kind":"boundary_hot_swap","detail":"tx=load-tx-2 rev=2 lease=2 ram_swap_ns=154000 worker_pid=728"}
+{"tsUnixMs":1777331888145,"scanId":1228,"kind":"boundary_warm_rollback","detail":"tx=rollback-r3 rev=3 lease=3 ram_swap_ns=942375 worker_pid=734"}
+{"tsUnixMs":1777331900544,"scanId":1848,"kind":"boundary_hot_swap","detail":"tx=load-tx-4 rev=4 lease=4 ram_swap_ns=207667 worker_pid=743"}
+{"tsUnixMs":1777331912805,"scanId":2461,"kind":"boundary_warm_rollback","detail":"tx=rollback-r5 rev=5 lease=5 ram_swap_ns=1124958 worker_pid=749"}
+{"tsUnixMs":1777331925204,"scanId":3081,"kind":"boundary_hot_swap","detail":"tx=load-tx-6 rev=6 lease=6 ram_swap_ns=322583 worker_pid=760"}
+{"tsUnixMs":1777331937424,"scanId":3692,"kind":"boundary_warm_rollback","detail":"tx=rollback-r7 rev=7 lease=7 ram_swap_ns=246459 worker_pid=765"}

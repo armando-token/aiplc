@@ -1,0 +1,5 @@
+{"tsUnixMs":1777332264420,"scanId":0,"kind":"rt_fifo_enabled","detail":"SCHED_FIFO prio=50 active"}
+{"tsUnixMs":1777332264420,"scanId":0,"kind":"scan_loop_started","detail":"rev=1 worker_pid=2275 armed=false"}
+{"tsUnixMs":1777332264446,"scanId":1,"kind":"jitter_threshold_exceeded","detail":"{\"scanId\":1,\"wakeupJitterNs\":41877,\"evalIpcNs\":531125,\"publishNs\":15459,\"cycleDurNs\":574292,\"ramSwapNs\":0,\"deadlineMiss\":false,\"activeWorkerPid\":2275,\"memAvailableKb\":359144,\"supervisorRssKb\":3932,\"workerRssKb\":2232,\"tempSocMc\":54702}"}
+{"tsUnixMs":1777332265960,"scanId":77,"kind":"operator_rearm","detail":"rearmed control"}
+{"tsUnixMs":1777360355101,"scanId":1404534,"kind":"worker_fault_fallback","detail":"worker error/timeout: IPC error: Broken pipe (os error 32)"}

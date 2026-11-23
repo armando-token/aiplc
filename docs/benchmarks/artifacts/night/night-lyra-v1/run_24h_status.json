@@ -1,0 +1,106 @@
+{
+  "status": "DETENIDO_PARCIAL",
+  "dir": "/userdata/plc-auto/night/night-lyra-v1-24h",
+  "pid": 2270,
+  "pgid": 2270,
+  "workerPid": 2275,
+  "hostStartLocal": "2026-11-23 01:30:00 PST",
+  "hostStartUtc": "2026-11-23T09:30:00Z",
+  "plcStartUtc": "2026-04-27T23:24:57Z",
+  "hostStopLocal": "2026-11-23 09:17:38 PST",
+  "hostStopUtc": "2026-11-23T17:17:38Z",
+  "plcStopUtc": "2026-04-28T07:12:33Z",
+  "elapsedSeconds": 28091,
+  "elapsedHuman": "07:48:11",
+  "progressPct": 32.51,
+  "stopReason": "Detenido limpiamente a solicitud del usuario para continuar más tarde",
+  "scanIdAt30s": 1655,
+  "missedReleasesAt30s": 0,
+  "lyraService": "active",
+  "processesRunningAfterStop": 0,
+  "stopScript": "/userdata/plc-auto/night/night-lyra-v1-24h/stop_24h.sh",
+  "log": "/userdata/plc-auto/night/night-lyra-v1-24h/supervisor_24h.log",
+  "metricsDir": "/userdata/plc-auto/night/night-lyra-v1-24h/metrics/gate2-24h",
+  "archivedPartialDir": "docs/benchmarks/artifacts/night/night-lyra-v1/gate2-24h-partial",
+  "rawLargeFilesKeptOnPlc": {
+    "anomaliesCsv": {
+      "path": "/userdata/plc-auto/night/night-lyra-v1-24h/metrics/gate2-24h/anomalies.csv",
+      "bytes": 62076446,
+      "lines": 1404534
+    },
+    "scansCsv": {
+      "path": "/userdata/plc-auto/night/night-lyra-v1-24h/metrics/gate2-24h/scans.csv",
+      "bytes": 8088541,
+      "lines": 100001
+    }
+  },
+  "finalMetrics": {
+    "runId": "gate2-24h",
+    "deviceId": "lyra-bench-01",
+    "bootId": 1777332264313306802,
+    "scansTotal": 1404535,
+    "deadlineMisses": 0,
+    "missedReleases": 0,
+    "telemetryDropped": 0,
+    "shadowDropped": 0,
+    "warmRollbackCount": 0,
+    "fallbackLatchCount": 1,
+    "fallbackLatchNote": "Ocurrió exclusivamente en scanId=1404534 durante la parada controlada (stop_24h.sh -> kill -TERM -2270) cuando plc-worker cerró su tubería IPC (Broken pipe, os error 32) milisegundos antes de que plc-supervisor saliera; 0 fallos durante las 07:48:11 de corrida.",
+    "wakeupJitter": {
+      "count": 1404535,
+      "p50Ns": 42000,
+      "p95Ns": 58000,
+      "p99Ns": 76000,
+      "p999Ns": 104000,
+      "maxNs": 592585
+    },
+    "evalIpc": {
+      "count": 1404535,
+      "p50Ns": 420000,
+      "p95Ns": 508000,
+      "p99Ns": 564000,
+      "p999Ns": 616000,
+      "maxNs": 985542
+    },
+    "publish": {
+      "count": 1404535,
+      "p50Ns": 16000,
+      "p95Ns": 20000,
+      "p99Ns": 56000,
+      "p999Ns": 84000,
+      "maxNs": 1926750
+    },
+    "cycleDur": {
+      "count": 1404535,
+      "p50Ns": 466000,
+      "p95Ns": 560000,
+      "p99Ns": 618000,
+      "p999Ns": 676000,
+      "maxNs": 2363084
+    },
+    "firstSample": {
+      "tsUnixMs": 1777332264444,
+      "scanId": 1,
+      "supervisorRssKb": 3932,
+      "supervisorPssKb": 2810,
+      "workerRssKb": 2232,
+      "workerPssKb": 1226,
+      "memAvailableKb": 359144,
+      "tempSocMc": 54702
+    },
+    "latestSample": {
+      "tsUnixMs": 1777360354426,
+      "scanId": 1404500,
+      "supervisorRssKb": 37396,
+      "supervisorPssKb": 36278,
+      "workerRssKb": 2232,
+      "workerPssKb": 1230,
+      "memAvailableKb": 325032,
+      "tempSocMc": 48168
+    }
+  },
+  "openFindings": [
+    "plc-worker mantuvo RSS/PSS completamente planos (2,232 KiB RSS / 1,226->1,230 KiB PSS) durante 1,404,535 scans (0 fugas).",
+    "plc-supervisor creció de 3,932 KiB a 37,396 KiB RSS (MemAvailable 359,144->325,032 KiB) por VirtualBenchState.history.push(...) sin acotar en crates/field-io/src/driver.rs; solo afecta al driver virtual de pruebas y no a LyraHardwareDriver. Se recomienda acotar ese búfer antes de relanzar la corrida completa de 24 h."
+  ]
+}

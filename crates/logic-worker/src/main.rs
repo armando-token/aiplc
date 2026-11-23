@@ -1,4 +1,5 @@
-use std::os::fd::{FromRawFd, RawFd};
+use std::io::Write;
+use std::os::fd::{AsRawFd, FromRawFd, RawFd};
 use std::os::unix::net::UnixStream;
 use std::thread;
 use std::time::Duration;
@@ -16,10 +17,14 @@ use logic_worker::sandbox::{close_inherited_fds_except, harden_worker_process};
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum FaultMode {
     None,
-    HangOnEval,      // F01: sleep past cycle deadline
+    HangOnEval,      // F01: sleep past cycle deadline without replying
     OomAlloc,        // F02: attempt large memory growth inside cgroup
     BadFrame,        // F03: return corrupted EvalResult
     EscapeSyscall,   // F06: test socket() + openat("/dev/gpiochip0") under seccomp
+    SlowMs(u64),     // N1.1/N1.2: sleep <ms> and then emit a late EvalRes
+    PartialEof,      // N1.2: write partial header/payload bytes and exit abruptly
+    Backpressure,    // N1.1: stop draining socket FD completely to fill TX buffer
+    Diverge,         // N1.3/N1.5: return valid EvalRes with mutated desired_mask
 }
 
 fn main() {
@@ -44,6 +49,7 @@ fn run_worker() -> i32 {
     let args: Vec<String> = std::env::args().collect();
     let mut ipc_fd: Option<RawFd> = None;
     let mut fault = FaultMode::None;
+    let mut fault_after_evals: u64 = 0;
 
     let mut i = 1;
     while i < args.len() {
@@ -58,6 +64,21 @@ fn run_worker() -> i32 {
             "--fault-oom" => fault = FaultMode::OomAlloc,
             "--fault-bad-frame" => fault = FaultMode::BadFrame,
             "--fault-escape" => fault = FaultMode::EscapeSyscall,
+            "--fault-slow-ms" => {
+                i += 1;
+                if i < args.len() {
+                    fault = FaultMode::SlowMs(args[i].parse().unwrap_or(50));
+                }
+            }
+            "--fault-partial-eof" => fault = FaultMode::PartialEof,
+            "--fault-backpressure" => fault = FaultMode::Backpressure,
+            "--fault-diverge" => fault = FaultMode::Diverge,
+            "--fault-after-evals" => {
+                i += 1;
+                if i < args.len() {
+                    fault_after_evals = args[i].parse().unwrap_or(0);
+                }
+            }
             _ => {}
         }
         i += 1;
@@ -149,8 +170,27 @@ fn run_worker() -> i32 {
         return 1;
     }
 
+    // Optional shrink RCVBUF on worker side when testing backpressure
+    if matches!(fault, FaultMode::Backpressure) && fault_after_evals == 0 {
+        let small: libc::c_int = 4096;
+        unsafe {
+            libc::setsockopt(
+                stream.as_raw_fd(),
+                libc::SOL_SOCKET,
+                libc::SO_RCVBUF,
+                &small as *const libc::c_int as *const libc::c_void,
+                std::mem::size_of::<libc::c_int>() as libc::socklen_t,
+            );
+        }
+        // Refuse to drain incoming socket bytes so parent write_frame_until hits backpressure timeout
+        loop {
+            thread::sleep(Duration::from_millis(50));
+        }
+    }
+
     // 3. Evaluation loop (zero extra FDs, no network, no filesystem opens)
     let mut tx_buf = Vec::with_capacity(4096);
+    let mut eval_count: u64 = 0;
     loop {
         let m = match read_runtime_frame_with_timeout(&mut stream, None, &mut rx_buf) {
             Ok(m) => m,
@@ -165,7 +205,13 @@ fn run_worker() -> i32 {
                 break;
             }
             IpcMessageType::EvalReq => {
-                match fault {
+                eval_count += 1;
+                let active_fault = if eval_count > fault_after_evals {
+                    fault
+                } else {
+                    FaultMode::None
+                };
+                match active_fault {
                     FaultMode::HangOnEval => {
                         thread::sleep(Duration::from_millis(200));
                         continue;
@@ -201,7 +247,43 @@ fn run_worker() -> i32 {
                         let _ = write_frame(&mut stream, IpcMessageType::Error, msg.as_bytes());
                         continue;
                     }
-                    FaultMode::None => {}
+                    FaultMode::SlowMs(ms) => {
+                        thread::sleep(Duration::from_millis(ms));
+                        let req = match decode_eval_request(&rx_buf) {
+                            Ok(r) => r,
+                            Err(e) => {
+                                let _ = write_frame(&mut stream, IpcMessageType::Error, e.to_string().as_bytes());
+                                continue;
+                            }
+                        };
+                        match engine.eval_sync(&req) {
+                            Ok(res) => {
+                                if encode_eval_result(&res, &mut tx_buf).is_ok() {
+                                    let _ = write_frame(&mut stream, IpcMessageType::EvalRes, &tx_buf);
+                                }
+                            }
+                            Err(e) => {
+                                let _ = write_frame(&mut stream, IpcMessageType::Error, e.to_string().as_bytes());
+                            }
+                        }
+                        continue;
+                    }
+                    FaultMode::PartialEof => {
+                        // Write truncated frame declaring 120 bytes of EvalRes, send only 8 bytes, then die
+                        let mut partial = Vec::with_capacity(13);
+                        partial.extend_from_slice(&120u32.to_le_bytes());
+                        partial.push(IpcMessageType::EvalRes as u8);
+                        partial.extend_from_slice(&[0xDE, 0xAD, 0xBE, 0xEF, 0x01, 0x02, 0x03, 0x04]);
+                        let _ = stream.write_all(&partial);
+                        let _ = stream.flush();
+                        return 1;
+                    }
+                    FaultMode::Backpressure => {
+                        loop {
+                            thread::sleep(Duration::from_millis(50));
+                        }
+                    }
+                    FaultMode::Diverge | FaultMode::None => {}
                 }
 
                 let req = match decode_eval_request(&rx_buf) {
@@ -212,7 +294,10 @@ fn run_worker() -> i32 {
                     }
                 };
                 match engine.eval_sync(&req) {
-                    Ok(res) => {
+                    Ok(mut res) => {
+                        if matches!(active_fault, FaultMode::Diverge) {
+                            res.desired_mask ^= 1;
+                        }
                         if let Err(e) = encode_eval_result(&res, &mut tx_buf) {
                             let _ = write_frame(&mut stream, IpcMessageType::Error, e.to_string().as_bytes());
                         } else {

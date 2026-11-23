@@ -65,6 +65,26 @@ pub trait LogicEngine: Send {
         self.dispatch(req)?;
         self.read_result()
     }
+
+    fn eval_until(
+        &mut self,
+        req: &EvalRequest,
+        _deadline: Instant,
+    ) -> Result<EvalResult, WorkerError> {
+        self.eval_sync(req)
+    }
+
+    fn worker_pid(&self) -> Option<u32> {
+        None
+    }
+
+    fn sandbox_report(&self) -> Option<crate::sandbox::SandboxReport> {
+        None
+    }
+
+    fn is_tainted(&self) -> bool {
+        false
+    }
 }
 
 // ---------------- Base64 minimal decoder (no extra crate dependency) ----------------
