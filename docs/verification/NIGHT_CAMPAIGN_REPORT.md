@@ -29,24 +29,24 @@
 | **Gate 2 — Carga 3 min** | Pool HTTP acotado (`429 BUSY`), swaps O(1) en frontera, rollback cálido y WAL off-scan | `gate2_decoupled_concurrent...` (`PASS`) | `gate2-load-3m` (`185 s`, `9,251 scans`, `10,858` req HTTP, 3 ciclos swap+rollback, Shadow vivo) | `wakeupJitter p99=176 µs`, `max=1.324 ms`; `ramSwap p50=248 µs`; `journalPersist max=47.4 ms` (`0` misses!) | **PASS (`0` misses, `0` drops)** |
 | **Gate 2 — WAL & `SIGKILL`** | `BoundaryEpochTracker(boot_id, rev, lease_epoch)`, propagación `503 STORAGE_DEGRADED`, recuperación única en `main.rs` | `gate2_delayed_wal_supersede...` + `gate2_silent_night...` + `d03_real_sigkill...` (`PASS`) | `caseA_crash_before_persisted` (`_exit(99)`) + `caseB_sigkill_after_stable` (`kill -9`) | `caseA`: `rev=1 armed=false needsOperatorReview=true`; `caseB`: `rev=2 armed=false needsOperatorReview=false activePersisted=true` | **PASS** |
 | **Gate 2 — Estabilidad 24 h** | Daemon detached (`setsid`), puerto aislado `127.0.0.1:18445`, `stop_24h.sh` por PGID | N/A | `/userdata/plc-auto/night/night-lyra-v1-24h` (`07:48:11`, detención limpia a solicitud) | `1,404,535 scans`, `0` misses/drops, `wakeupJitter p99=76 µs / max=593 µs`, `cycleDur p99=618 µs / max=2.363 ms`, `worker RSS=2,232 KiB` (`0` fuga), `lyra-plc=active` | **DETENIDO PARCIAL (07:48:11 / 32.5%)** |
-| **Gate 3 (iPad)** | [Hoja Gate 3](file:///Users/armandosilva/Projects/PLC_Lucky/docs/verification/GATE3_IPAD_ACCESS_SHEET.md) | — | Prueba presencial con iPad en LAN/tailnet | — | **PENDIENTE** |
-| **Gate 4 (Instrumentos)** | [Hoja Gate 4](file:///Users/armandosilva/Projects/PLC_Lucky/docs/verification/GATE4_INSTRUMENTS_PHYSICAL_IO_SHEET.md) | — | Prueba presencial con relé, THT02 y osciloscopio | — | **PENDIENTE** |
-| **Gate 5 (Voz Offline)** | [Hoja Gate 5](file:///Users/armandosilva/Projects/PLC_Lucky/docs/verification/GATE5_OFFLINE_VOICE_SHEET.md) | — | Prueba presencial ASR offline → propuesta firmada | — | **PENDIENTE** |
+| **Gate 3 (iPad)** | [Hoja Gate 3](./GATE3_IPAD_ACCESS_SHEET.md) | — | Prueba presencial con iPad en LAN/tailnet | — | **PENDIENTE** |
+| **Gate 4 (Instrumentos)** | [Hoja Gate 4](./GATE4_INSTRUMENTS_PHYSICAL_IO_SHEET.md) | — | Prueba presencial con relé, THT02 y osciloscopio | — | **PENDIENTE** |
+| **Gate 5 (Voz Offline)** | [Hoja Gate 5](./GATE5_OFFLINE_VOICE_SHEET.md) | — | Prueba presencial ASR offline → propuesta firmada | — | **PENDIENTE** |
 
 ---
 
 ## 2. Hallazgo Real Detectado en Silicio ARMv7 y Regresión Cubierta
 
 Durante la primera ejecución de `n2_recovery` (`caseA_crash_before_persisted`) en la placa real, la recuperación tras `_exit(99)` en `AFTER_VOLATILE_BEFORE_PERSISTED` devolvió inesperadamente `needsOperatorReview: false` en el segundo arranque.  
-- **Causa raíz**: [`main.rs`](file:///Users/armandosilva/Projects/PLC_Lucky/crates/supervisor/src/main.rs) invocaba `recover_on_boot(boot_id)` dos veces con el mismo `boot_id` cuando arrancaba con bloque de bootstrap: la primera llamada promovía `ActiveVolatile -> RecoveryRequired` bajo `boot_id` (y marcaba `needs_operator_review=true` antes de descartarse), y la segunda llamada encontraba el registro ya en `RecoveryRequired` con `rec.boot_id == boot_id`, limpiando `needs_operator_review` a `false`.
-- **Corrección y regresión**: Se corrigió `main.rs` para ejecutar `recover_on_boot(boot_id)` una sola vez (solo sembrando `--initial-pkg` cuando `last_stable_package.is_none()` y preservando `needs_operator_review`), se añadió un test real multi-proceso Boot #1 → `_exit(99)` → Boot #2 en [`night_gates_tests.rs`](file:///Users/armandosilva/Projects/PLC_Lucky/crates/supervisor/tests/night_gates_tests.rs), y se re-verificaron en Luckfox tanto `n0_n1` como `n2_recovery` (`caseA` y `caseB`) y el lanzamiento 24 h.
+- **Causa raíz**: [`main.rs`](../../crates/supervisor/src/main.rs) invocaba `recover_on_boot(boot_id)` dos veces con el mismo `boot_id` cuando arrancaba con bloque de bootstrap: la primera llamada promovía `ActiveVolatile -> RecoveryRequired` bajo `boot_id` (y marcaba `needs_operator_review=true` antes de descartarse), y la segunda llamada encontraba el registro ya en `RecoveryRequired` con `rec.boot_id == boot_id`, limpiando `needs_operator_review` a `false`.
+- **Corrección y regresión**: Se corrigió `main.rs` para ejecutar `recover_on_boot(boot_id)` una sola vez (solo sembrando `--initial-pkg` cuando `last_stable_package.is_none()` y preservando `needs_operator_review`), se añadió un test real multi-proceso Boot #1 → `_exit(99)` → Boot #2 en [`night_gates_tests.rs`](../../crates/supervisor/tests/night_gates_tests.rs), y se re-verificaron en Luckfox tanto `n0_n1` como `n2_recovery` (`caseA` y `caseB`) y el lanzamiento 24 h.
 
 ---
 
 ## 3. Métricas Separadas de Gate 2 en Luckfox ARMv7
 
 ### 3.1 Baseline 10 minutos (`gate2-baseline-10m`, `30,002` scans @ 20 ms)
-- **Archivo fuente**: [baseline summary.json](file:///Users/armandosilva/Projects/PLC_Lucky/docs/benchmarks/artifacts/night/night-lyra-v1/gate2-baseline-10m/summary.json), [samples.csv](file:///Users/armandosilva/Projects/PLC_Lucky/docs/benchmarks/artifacts/night/night-lyra-v1/gate2-baseline-10m/samples.csv)
+- **Archivo fuente**: [baseline summary.json](../benchmarks/artifacts/night/night-lyra-v1/gate2-baseline-10m/summary.json), [samples.csv](../benchmarks/artifacts/night/night-lyra-v1/gate2-baseline-10m/samples.csv)
 - `wakeup_jitter_ns`: p50 = `44,000 ns`, p95 = `56,000 ns`, **p99 = `68,000 ns` (`0.068 ms`)**, p99.9 = `82,000 ns`, **max = `106,079 ns` (`0.106 ms`)**
 - `eval_ipc_ns`: p50 = `418,000 ns`, p95 = `482,000 ns`, p99 = `506,000 ns`, p99.9 = `554,000 ns`, max = `714,583 ns`
 - `publish_ns`: p50 = `20,000 ns`, p95 = `22,000 ns`, p99 = `24,000 ns`, p99.9 = `64,000 ns`, max = `933,917 ns`
@@ -57,7 +57,7 @@ Durante la primera ejecución de `n2_recovery` (`caseA_crash_before_persisted`) 
   `scanId=2`, `wakeupJitterNs=64,629` (`0.065 ms`), `evalIpcNs=516,541` (`0.517 ms`), `publishNs=16,042`, `cycleDurNs=562,625` (`0.563 ms`), `deadlineMiss=false`, `activeWorkerPid=3237`, `memAvailableKb=353,540`, `tempSocMc=51,732`.
 
 ### 3.2 Carga Concurrente 3 minutos (`gate2-load-3m`, `9,251` scans @ 20 ms + API + Shadow + 3 Swaps/Rollbacks)
-- **Archivo fuente**: [load summary.json](file:///Users/armandosilva/Projects/PLC_Lucky/docs/benchmarks/artifacts/night/night-lyra-v1/gate2-load-3m/summary.json), [api_load_stats.json](file:///Users/armandosilva/Projects/PLC_Lucky/docs/benchmarks/artifacts/night/night-lyra-v1/gate2-load-3m/api_load_stats.json), [events.jsonl](file:///Users/armandosilva/Projects/PLC_Lucky/docs/benchmarks/artifacts/night/night-lyra-v1/gate2-load-3m/events.jsonl)
+- **Archivo fuente**: [load summary.json](../benchmarks/artifacts/night/night-lyra-v1/gate2-load-3m/summary.json), [api_load_stats.json](../benchmarks/artifacts/night/night-lyra-v1/gate2-load-3m/api_load_stats.json), [events.jsonl](../benchmarks/artifacts/night/night-lyra-v1/gate2-load-3m/events.jsonl)
 - Tráfico HTTP concurrente: **`10,858` respuestas `200 OK`** (`/state`, `/scans`, `/virtual-inputs`), `busy429 = 0`, `err = 6` (solo durante el cierre del segundo `185`)
 - Promociones reales ejecutadas: `3` hot-swaps (`M1 → M2`) + `3` warm rollbacks (`M2 → M1`, `warmRollbackCount = 3`)
 - `wakeup_jitter_ns`: p50 = `60,000 ns`, p95 = `94,000 ns`, **p99 = `176,000 ns` (`0.176 ms`)**, p99.9 = `286,000 ns`, **max = `1,324,291 ns` (`1.324 ms`)**
@@ -109,10 +109,10 @@ Detenida limpiamente a solicitud del usuario mediante `stop_24h.sh` (`PGID = 227
   - **Worker (`plc-worker`)**: `RSS 2,232 → 2,232 KiB`, `PSS 1,226 → 1,230 KiB` (**completamente plano tras `1.40M` scans, `0` fugas**)
   - **Supervisor (`plc-supervisor`)**: `RSS 3,932 → 37,396 KiB` (`PSS 2,810 → 36,278 KiB`), `MemAvailable 359,144 → 325,032 KiB` (`~317 MiB` libres), `temp_soc_mc 54,702 → 48,168` (`48.2 °C`). El crecimiento lineal del RSS del supervisor proviene de `VirtualBenchState.history.push(...)` sin acotar en `crates/field-io/src/driver.rs` (solo driver virtual de benchmark, no afecta a `LyraHardwareDriver`).
 - **Archivos archivados en el repositorio**:
-  - [status run_24h_status.json](file:///Users/armandosilva/Projects/PLC_Lucky/docs/benchmarks/artifacts/night/night-lyra-v1/run_24h_status.json)
-  - [summary.json](file:///Users/armandosilva/Projects/PLC_Lucky/docs/benchmarks/artifacts/night/night-lyra-v1/gate2-24h-partial/summary.json)
-  - [samples.csv](file:///Users/armandosilva/Projects/PLC_Lucky/docs/benchmarks/artifacts/night/night-lyra-v1/gate2-24h-partial/samples.csv)
-  - [events.jsonl](file:///Users/armandosilva/Projects/PLC_Lucky/docs/benchmarks/artifacts/night/night-lyra-v1/gate2-24h-partial/events.jsonl)
+  - [status run_24h_status.json](../benchmarks/artifacts/night/night-lyra-v1/run_24h_status.json)
+  - [summary.json](../benchmarks/artifacts/night/night-lyra-v1/gate2-24h-partial/summary.json)
+  - [samples.csv](../benchmarks/artifacts/night/night-lyra-v1/gate2-24h-partial/samples.csv)
+  - [events.jsonl](../benchmarks/artifacts/night/night-lyra-v1/gate2-24h-partial/events.jsonl)
 - **CSVs crudos pesados conservados en la Luckfox** (fuera de Git por tamaño):
   - `/userdata/plc-auto/night/night-lyra-v1-24h/metrics/gate2-24h/anomalies.csv` (`62,076,446` bytes, `1,404,534` líneas)
   - `/userdata/plc-auto/night/night-lyra-v1-24h/metrics/gate2-24h/scans.csv` (`8,088,541` bytes, `100,001` líneas)
